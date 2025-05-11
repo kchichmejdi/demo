@@ -1,5 +1,10 @@
-FROM openjdk:21-jdk-slim
+# Exemple pour un projet Java avec Maven
+FROM maven:3.8-openjdk-17 AS builder
 WORKDIR /app
-COPY target/spring-boot-postgres-crud-0.0.1-SNAPSHOT.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+COPY . .
+RUN mvn clean package
+
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+COPY --from=builder /app/target /app/target
+CMD ["java", "-jar", "/app/target/votre-app.jar"]
